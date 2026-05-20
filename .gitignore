@@ -1,0 +1,16 @@
+**/build/
+**/*.exe
+**/*.obj
+**/*.o
+**/*.out
+**/*.ilk
+**/*.pdb
+**/*.exp
+**/*.lib
+**/CMakeCache.txt
+**/CMakeFiles/
+**/.vs/
+**/out/
+
+dungeon_crawler/build.exe
+dungeon_crawler/build
