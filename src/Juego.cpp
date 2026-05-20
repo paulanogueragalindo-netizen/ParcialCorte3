@@ -536,3 +536,29 @@ void Juego::bucleJuego() {
     }
 }
 
+void Juego::ejecutar() {
+    pantallaTitulo();
+    pantallaControles();
+    bucleJuego();
+
+    limpiarPantalla();
+    if (estado == EST_VICTORIA) {
+        audioVictoria();
+        consolaColorTitulo();
+        std::cout << "========================================\n";
+        std::cout << "         VICTORIA - LO LOGRASTE\n";
+        std::cout << "   La llave abrio el altar sagrado\n";
+        std::cout << "========================================\n";
+        consolaColorReset();
+    } else if (jugador.vida <= 0 && estado == EST_DERROTA) {
+        audioDerrota();
+        consolaColorDerrota();
+        std::cout << "========================================\n";
+        std::cout << "              GAME OVER\n";
+        std::cout << "         Tu heroe ha caido...\n";
+        std::cout << "========================================\n";
+        consolaColorReset();
+    } else {
+        std::cout << "Partida terminada.\n";
+    }
+}
