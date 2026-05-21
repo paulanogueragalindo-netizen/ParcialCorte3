@@ -1,6 +1,6 @@
 # Dungeon Crawler — Parcial Corte 3
 
-**Integrantes:** Paul Noguera · Julian Rojas
+**Integrantes:** Paula Noguera y Julian Rojas
 
 ---
 
