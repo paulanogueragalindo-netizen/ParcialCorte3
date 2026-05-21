@@ -11,7 +11,9 @@ add_executable(DungeonCrawler
     src/Jugador.cpp
     src/Enemigo.cpp
     src/Objeto.cpp
+    src/Audio.cpp
     src/Consola.cpp
+    src/Graficos.cpp
 )
 
 target_include_directories(DungeonCrawler PRIVATE include)

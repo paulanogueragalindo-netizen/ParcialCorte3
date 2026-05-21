@@ -12,11 +12,27 @@ static HANDLE consolaHandle() {
 static void ponerAtributo(WORD color) {
     SetConsoleTextAttribute(consolaHandle(), color);
 }
+
+#else
+#define ANSI_RESET      "\033[0m"
+#define ANSI_BOLD       "\033[1m"
+#define ANSI_RED        "\033[31m"
+#define ANSI_GREEN      "\033[32m"
+#define ANSI_YELLOW     "\033[33m"
+#define ANSI_BLUE       "\033[34m"
+#define ANSI_CYAN       "\033[36m"
+#define ANSI_WHITE      "\033[37m"
+#define ANSI_BRED       "\033[1;31m"
+#define ANSI_BGREEN     "\033[1;32m"
+#define ANSI_BYELLOW    "\033[1;33m"
+#define ANSI_BCYAN      "\033[1;36m"
 #endif
 
 void consolaColorReset() {
 #ifdef _WIN32
     ponerAtributo(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+#else
+    std::cout << ANSI_RESET;
 #endif
 }
 
@@ -24,7 +40,7 @@ void consolaColorTitulo() {
 #ifdef _WIN32
     ponerAtributo(FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
 #else
-    (void)0;
+    std::cout << ANSI_BYELLOW;
 #endif
 }
 
@@ -38,8 +54,13 @@ void consolaColorVida(int vida, int vidaMax) {
         ponerAtributo(FOREGROUND_GREEN | FOREGROUND_INTENSITY);
     }
 #else
-    (void)vida;
-    (void)vidaMax;
+    if (vida <= vidaMax / 4) {
+        std::cout << ANSI_BRED;
+    } else if (vida <= vidaMax / 2) {
+        std::cout << ANSI_BYELLOW;
+    } else {
+        std::cout << ANSI_BGREEN;
+    }
 #endif
 }
 
@@ -49,13 +70,15 @@ void consolaColorAlerta(const char* texto) {
     std::cout << texto;
     consolaColorReset();
 #else
-    std::cout << texto;
+    std::cout << ANSI_BRED << texto << ANSI_RESET;
 #endif
 }
 
 void consolaColorDerrota() {
 #ifdef _WIN32
     ponerAtributo(FOREGROUND_RED | FOREGROUND_INTENSITY);
+#else
+    std::cout << ANSI_BRED;
 #endif
 }
 
@@ -80,6 +103,11 @@ void consolaRefrescoRapido() {
         origen.X = 0;
         origen.Y = 0;
         SetConsoleCursorPosition(consolaHandle(), origen);
+        return;
+    }
+#else
+    if (refrescoRapidoActivo == 1) {
+        std::cout << "\033[H" << std::flush;
         return;
     }
 #endif
@@ -119,25 +147,38 @@ void consolaImprimirCasilla(char c) {
     ponerAtributo(color);
     std::cout << c;
     consolaColorReset();
+
 #else
+    const char* color = ANSI_RESET;
+    char imprime = c;
+
     if (c == GRAF_HEROE) {
-        std::cout << '@';
+        color = ANSI_BGREEN; imprime = '@';
     } else if (c == GRAF_GOBLIN) {
-        std::cout << 'G';
+        color = ANSI_BRED;   imprime = 'G';
     } else if (c == GRAF_ESQUELETO) {
-        std::cout << 'S';
+        color = "\033[1;34m"; imprime = 'S';
     } else if (c == GRAF_PARED) {
-        std::cout << '#';
+        color = "\033[90m";  imprime = '#';
     } else if (c == GRAF_SUELO) {
-        std::cout << '.';
+        color = "\033[36m";  imprime = '.';
     } else if (c == GRAF_LLAVE) {
-        std::cout << 'K';
+        color = ANSI_BYELLOW; imprime = 'K';
     } else if (c == GRAF_POCION) {
-        std::cout << 'P';
+        color = ANSI_BCYAN;  imprime = 'P';
     } else if (c == GRAF_ALTAR) {
-        std::cout << 'A';
-    } else {
-        std::cout << c;
+        color = ANSI_BYELLOW; imprime = 'H';
+    } else if (c == GRAF_PUERTA_CERRADA) {
+        color = ANSI_BYELLOW; imprime = '+';
+    } else if (graficosEsPuerta(c) == 1) {
+        color = ANSI_BGREEN;
+        // imprime el propio caracter (>, <, ^, v) que ya es ASCII
+    } else if (c == GRAF_LATIGO) {
+        color = ANSI_YELLOW; imprime = '-';
+    } else if (c == GRAF_RATA) {
+        color = ANSI_WHITE;  imprime = 'r';
     }
+
+    std::cout << color << imprime << ANSI_RESET;
 #endif
 }
